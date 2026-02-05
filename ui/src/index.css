@@ -1,3 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+
+@theme {
+  --color-app-bg: var(--color-zinc-50);
+}
+
+body {
+  background-color: var(--color-app-bg);
+}
