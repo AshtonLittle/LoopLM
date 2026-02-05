@@ -14,3 +14,43 @@ LoopLM uses a Recursive Programmatic Search:
 3. If relevant segments are found, but still too large for proper attention, the model calls rlm_query().
     - This spawns a sub-agent with a smaller slice of content.
 4. Results from all recursive branches are returned to the primary agent and finally output.
+
+## How to Use
+
+### Setup
+1. Clone this repository
+2. Install dependencies: `pip install openai python-dotenv`
+3. Copy `.env.template` to `.env` and configure your LLM provider:
+   ```
+   LLM_BASE_URL=http://localhost:11434/v1    # or your provider's endpoint
+   API_KEY=your_api_key_here                  # leave empty for Ollama
+   LLM_MODEL=qwen2.5-coder:7b                 # your model name
+   ```
+
+### Configuration
+LoopLM supports any OpenAI-compatible API:
+- **Ollama** (local): `http://localhost:11434/v1`
+- **GitHub Models**: `https://models.inference.ai.azure.com`
+- **Groq**: `https://api.groq.com/openai/v1`
+- For using other providers, provide their endpoint.
+
+### Running Analysis
+```python
+from rlm_engine import RLMEngine
+
+# Initialize the engine
+engine = RLMEngine(max_depth=5)
+
+# Analyze a document
+with open("your_document.txt", "r") as f:
+    document = f.read()
+
+result = engine.analyze("Your question here", document)
+print(result)
+```
+
+### Best Practices
+- Use clear, specific queries for better results
+- Test with shorter documents first to understand the system
+- Adjust `max_depth` based on document size and query complexity
+- For best accuracy, use models with strong code generation capabilities
