@@ -12,7 +12,7 @@ class RLMEngine:
         if depth > self.max_depth:
             return "Maximum analysis depth reached."
         
-        if len(document_text) < 15000:
+        if len(document_text) < 4000:
             return self._get_response(f"Analyze this snippet and answer the query: {query}\n\nSnippet: {document_text}", is_recursive_step=False)
         
         prompt = f"""
@@ -60,8 +60,11 @@ class RLMEngine:
                         model=self.model,
                         temperature=1
                     )
-            if response and response.choices:
-                return response.choices[0].message.content
+
+            if not response:
+                raise RuntimeError("No response from model")
+            return response.choices[0].message.content
+        
         except Exception as e:
             raise RuntimeError(f"API Error: {e}")
         
@@ -72,10 +75,15 @@ class RLMEngine:
         
         code = code_match.group(1)
 
+        def rlm_query(q: str, ctx: str = None):
+            if ctx is None:
+                ctx = context
+            return self.analyze(q, ctx, depth + 1)
+
         local_env = {
             "C": context,
             "re": re,
-            "rlm_query": lambda q, ctx: self.analyze(q, ctx, depth + 1),
+            "rlm_query": rlm_query,
             "final_result": None
         }
 
