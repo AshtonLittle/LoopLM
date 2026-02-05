@@ -37,6 +37,9 @@ class RLMEngine:
         """
 
         raw_response = self._get_response(prompt, is_recursive_step=True)
+
+        if raw_response is None or not isinstance(raw_response, str):
+            return f"Invalid response from model at depth {depth}."
         return self._execute_sandbox(raw_response, document_text, query, depth)
     
     def _get_response(self, prompt: str, is_recursive_step: bool) -> str:
