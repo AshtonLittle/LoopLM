@@ -8,7 +8,7 @@ class RLMEngine:
         self.max_depth = max_depth
         self.client, self.model= connection.get_rlm_client()
 
-    def analyze(self, query: str, document_text: str, depth=0) -> str:
+    def analyze(self, query: str, document_text: str, depth: int = 0) -> str:
         if depth > self.max_depth:
             return "Maximum analysis depth reached."
         
@@ -39,11 +39,11 @@ class RLMEngine:
         raw_response = self._get_response(prompt, is_recursive_step=True)
         return self._execute_sandbox(raw_response, document_text, query, depth)
     
-    def _get_response(self, prompt, is_recursive_step) -> str:
+    def _get_response(self, prompt: str, is_recursive_step: bool) -> str:
         try:
             if is_recursive_step:
                 time.sleep(0.25)
-
+            response = None
             try:
                 response = self.client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt}],
@@ -57,7 +57,8 @@ class RLMEngine:
                         model=self.model,
                         temperature=1
                     )
-            return response.choices[0].message.content
+            if response and response.choices:
+                return response.choices[0].message.content
         except Exception as e:
             raise RuntimeError(f"API Error: {e}")
         
