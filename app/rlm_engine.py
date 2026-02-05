@@ -4,7 +4,7 @@ import time
 import connection
 
 class RLMEngine:
-    def __init__(self, max_depth=3):
+    def __init__(self, max_depth=5):
         self.max_depth = max_depth
         self.client, self.model= connection.get_rlm_client()
 
@@ -34,6 +34,7 @@ class RLMEngine:
         MANDATORY OUTPUT FORMAT:
         Your response must contain a ```python block.
         The final result must be assigned to a variable named 'final_result'.
+        Use only standard ASCII straight quotes (' or ") for all code syntax. Do not use curly/typographic quotes.
         """
 
         raw_response = self._get_response(prompt, is_recursive_step=True)
