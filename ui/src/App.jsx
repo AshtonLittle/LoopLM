@@ -45,44 +45,51 @@ function App() {
           <p className="opacity-40 font-sans text-slate-400">
             // Upload file and type in a prompt below
           </p>
-
         </div>
         {files.length === 0 ? (
-        <div
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className={`mt-10 h-48 border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer ${
-            isDragging
-              ? "border-amber-600 bg-amber-100"
-              : "border-slate-300 bg-amber-50 hover:border-slate-500"
-          }`}
-        >
-          <p
-            className={`font-medium ${isDragging ? "text-amber-600" : "text-slate-500"}`}
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`mt-10 h-48 border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer ${
+              isDragging
+                ? "border-amber-600 bg-amber-100"
+                : "border-slate-300 bg-amber-50 hover:border-slate-500"
+            }`}
           >
-            {isDragging ? "Drag PDFs or TXT files here" : "Drag PDFs or TXT files here"}
-          </p>
-        </div>
-
+            <p
+              className={`font-medium ${isDragging ? "text-amber-600" : "text-slate-500"}`}
+            >
+              {isDragging
+                ? "Drag PDFs or TXT files here"
+                : "Drag PDFs or TXT files here"}
+            </p>
+          </div>
         ) : (
-            <div className="mt-10 space-y-3">
-              <div className="relative">
-                <textarea
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Enter prompt..."
-                  className="w-full p-4 pr-32 border border-slate-200 focus:ring-2 focus:ring-amber-300 focus:border-transparent outline-none transition-all resize-none h-48 text-sm bg-amber-50"
-                />
-                <button
-                  onClick={handleRunProgram}
-                  disabled={!prompt.trim()}
-                  className="absolute bottom-3 right-3 bg-amber-600 text-white px-5 py-2.5 rounded-lg text-xs font-bold hover:bg-amber-700 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
-                >
-                  Run
-                </button>
-              </div>
+          <div className="mt-10 space-y-3">
+            <div className="relative">
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Enter prompt..."
+                className="w-full p-4 pr-32 border border-slate-200 focus:ring-2 focus:ring-amber-300 focus:border-transparent outline-none transition-all resize-none h-48 text-sm bg-amber-50"
+              />
+              <button
+                onClick={() => setFiles([])}
+                className="w-21 h-12 absolute bottom-10 right-7.5 bg-slate-500 text-white px-5 py-2.5 text-xs font-bold hover:bg-slate-600"
+              >
+                {" "}
+                Back{" "}
+              </button>
+              <button
+                onClick={handleRunProgram}
+                disabled={!prompt.trim()}
+                className="w-21 h-12 absolute top-10 right-7.5 bg-amber-600 text-white px-5 py-2.5 text-xs font-bold hover:bg-amber-700"
+              >
+                Run
+              </button>
             </div>
+          </div>
         )}
       </main>
 
