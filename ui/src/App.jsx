@@ -26,9 +26,9 @@ function App() {
     setFiles((prev) => [...prev, ...validFiles]);
   };
 
-  const handleRunProgram = () => {
+  const handleRunProgram = async () => {
     console.log("Running analysis for:", prompt);
-    //future logic will go here
+    //Tesseract stuff goes here 
   };
 
   return (
