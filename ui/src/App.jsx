@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { createWorker } from "tesseract.js";
 
 function App() {
   const [files, setFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const [result, setResult] = useState("");
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -27,8 +29,36 @@ function App() {
   };
 
   const handleRunProgram = async () => {
-    console.log("Running analysis for:", prompt);
-    //Tesseract stuff goes here 
+    if (files.length === 0) return;
+
+    const worker = await createWorker("eng");
+
+    try {
+      const file = files[0];
+
+      const imageURL = URL.createObjectURL(file);
+
+      const {
+        data: { text },
+      } = await worker.recognize(imageURL);
+
+      const response = await fetch("http://localhost:5000/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          documentText: text,
+          userPrompt: prompt,
+        }),
+      });
+
+      const data = await response.json();
+
+      setResult(data.answer);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      await worker.terminate();
+    }
   };
 
   return (
@@ -42,9 +72,15 @@ function App() {
 
       <main className="mt-10 w-full max-w-5xl bg-white p-8 min-h-100">
         <div className="bg-slate-900 p-6 min-h-65 overflow-hidden">
-          <p className="opacity-40 font-sans text-slate-400">
-            // Upload file and type in a prompt below
-          </p>
+          {result ? (
+            <div className="animate-in slide-in-from-left duration-400">
+              <p className="opacity-70 font-sans text-slate-300">{result}</p>
+            </div>
+          ) : (
+            <p className="opacity-70 font-sans text-slate-400">
+              // Upload file and type in a prompt below
+            </p>
+          )}
         </div>
         {files.length === 0 ? (
           <div
@@ -75,7 +111,11 @@ function App() {
                 className="w-full p-4 pr-32 border border-slate-200 focus:ring-2 focus:ring-amber-300 focus:border-transparent outline-none transition-all resize-none h-48 text-sm bg-amber-50"
               />
               <button
-                onClick={() => setFiles([])}
+                onClick={() => {
+                  setFiles([]);
+                  setResult("");
+                  setPrompt("");
+                }}
                 className="w-21 h-12 absolute bottom-10 right-7.5 bg-slate-500 text-white px-5 py-2.5 text-xs font-bold hover:bg-slate-600"
               >
                 {" "}
